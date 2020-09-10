@@ -1,0 +1,184 @@
+
+$shadow: 0 8px 10px -3px rgba(0,0,0,0.1),0 4px 6px -2px rgba(0,0,0,0.1),0 -8px 12px 0px rgba(0,0,0,0.05),0 -2px 3px -2px rgba(0,0,0,0.01);
+$primary: #00a6fa;
+$grey500: #919393;
+$primary-light: #f3fbff;
+.SearchBar_searchInput__2pENS {
+    box-shadow: $shadow;
+    border-radius: 8px;
+    border: none;
+    display: block;
+    height: 2.5rem;
+    padding: 1.75rem 1.75rem 1.75rem 3rem;
+    font-weight: 500;
+    text-transform: capitalize;
+    transition: box-shadow .2s ease;
+    width: 100%;
+}
+.SearchBar_iconLocation__1Egat {
+    position: absolute;
+    left: 1rem;
+}
+.SearchBar_icons__37sj1 {
+    height: 1.25rem;
+    width: 1.25rem;
+}
+.SearchBar_searchContainer__3RS1T {
+    display: flex;
+    align-items: center;
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+.SearchBar_searchBtn__3qNgr {
+    background: transparent;
+    border: none;
+    position: absolute;
+    right: 1rem;
+    margin: 0;
+}
+.SearchBar_icons__37sj1 {
+    height: 1.25rem;
+    width: 1.25rem;
+}
+
+.SearchBar_searchInput__2pENS:focus {
+    outline: none;
+    box-shadow: 0 0 1px 2px $primary;
+}
+.DailyForecasts_forecastsContainer__EoB4K {
+    display: flex;
+    font-size: .95rem;
+    overflow-x: scroll;
+    margin-bottom: 1.5rem;
+    white-space: nowrap;
+}
+
+.DailyForecasts_dailyForecastContainer__13H90 {
+    position: relative;
+    margin: .25rem;
+}
+
+.DailyForecasts_activeForecastSelector__2oK8e {
+    cursor: pointer;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    opacity: 0;
+}
+.DailyForecasts_activeForecastSelector__2oK8e:checked~.DailyForecasts_dailyForecast__131e5 {
+    background: #fffdf7;
+    box-shadow: 0 0 1px 3px $primary;
+    transition: box-shadow .3s ease-in;
+}
+.DailyForecasts_dailyForecast__131e5 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: .5rem 1rem;
+    margin-right: .5rem;
+    transition: box-shadow .3s ease-in;
+}
+[type=checkbox], [type=radio] {
+    box-sizing: border-box;
+    padding: 0;
+}
+.DailyForecasts_forecastIcon__1YcEE {
+    margin: .5rem;
+    width: 27px;
+}
+.DailyForecasts_dailyForecast__131e5 p {
+    margin: 0 0 .25rem;
+    font-weight: 500;
+}
+.text-lighter {
+    color: $grey500;
+}
+
+.SearchBar_searchListContainer__1mpdS {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: $shadow;
+    position: absolute;
+    top: 110%;
+    left: 0;
+    right: 0;
+    z-index: 10;
+}
+
+.SearchList_searchListContainer__1PVR4 {
+    border-bottom: 1px solid rgba(0,0,0,.1);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: .75rem 1.5rem;
+    -webkit-animation: SearchList_slideIn__2c_J- .5s;
+    animation: SearchList_slideIn__2c_J- .5s;
+}
+.DetailedForecast_detailedContainer__3F3Bs {
+    border-radius: 8px;
+    box-shadow: $shadow;
+    padding: 1.5rem 1rem 0;
+}
+.DetailedForecast_currentTempContainer__2qFgV {
+    display: flex;
+    align-items: baseline;
+    margin-bottom: 1.5rem;
+}
+.DetailedForecast_currentTemp__3gkzL {
+    font-size: 3rem;
+    font-weight: 900;
+    margin: 0;
+}
+.DetailedForecast_currentTempIcon__2VNAN {
+    height: 3em;
+    margin-left: 1rem;
+}
+.DetailedForecast_graphContainer__3t3cx {
+    overflow: scroll;
+    margin-bottom: 2rem;
+}
+.DetailedForecast_secondaryStatsContainer__26qz7 {
+    display: flex;
+    margin-bottom: 3rem;
+}
+.DetailedForecast_secondaryStats__27RJT:first-of-type {
+    margin-right: .5rem;
+}
+.DetailedForecast_secondaryStats__27RJT {
+    background: $primary-light;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem .75rem;
+}
+.bold {
+    font-weight: 700;
+}
+.DetailedForecast_sunriseStats__1OkUS {
+    display: flex;
+    flex-direction: column;
+}
+.justify-space-between {
+    justify-content: space-between;
+}
+.SearchList_weatherIcon__E3rLp {
+    height: 40px;
+    width: 40px;
+    margin-left: .5rem;
+}
+.wrap-svg {
+    width: 100%;
+}
+.mountain-surface {
+    width: 100%;  
+}
+@media (max-width: 320px) {
+    .mountain-surface {
+        width: 200px;
+    } 
+    .wrap-svg {
+        width: 200px;  
+    }
+}
