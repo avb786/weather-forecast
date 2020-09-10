@@ -48,7 +48,7 @@ export class DashboardComponent implements OnInit {
   filterCity(searchText: string): void {
     if (searchText.length) {
       this.searchTextVal = true;
-      this.options = [...this.bulkCities.filter(c => c.city.toLowerCase().indexOf(searchText.toLowerCase()) > -1)];
+      this.options = [...this.bulkCities.filter(c => c.city.toLowerCase().indexOf(searchText.toLowerCase()) > -1 || c.admin.toLowerCase().indexOf(searchText.toLowerCase()) > -1)];
       this.options.forEach(option => {
         if (option && option.weather) { } else {
           this.locationService.getCurrentWeather(option.lat, option.lng).then(response => {
