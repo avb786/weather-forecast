@@ -10,6 +10,8 @@ import { FilterPipe } from './pipes/filter.pipe';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { FilterPipeModule } from "ngx-filter-pipe";
+import {ChartModule} from 'primeng/chart';
+import { NgApexchartsModule } from "ng-apexcharts";
 
 @NgModule({
   declarations: [
@@ -23,7 +25,9 @@ import { FilterPipeModule } from "ngx-filter-pipe";
     NgbModule,
     HttpClientModule,
     FormsModule,
-    FilterPipeModule
+    FilterPipeModule,
+    ChartModule,
+    NgApexchartsModule
   ],
   providers: [DatePipe],
   bootstrap: [AppComponent]

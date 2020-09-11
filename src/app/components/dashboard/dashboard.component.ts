@@ -1,7 +1,22 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { LocationDetailsService } from '../../services/location-details.service';
 import { DatePipe } from '@angular/common';
 import { AuthService } from 'src/app/services/auth.service';
+import * as _ from 'lodash';
+import {
+  ChartComponent,
+  ApexAxisChartSeries,
+  ApexChart,
+  ApexXAxis,
+  ApexTitleSubtitle
+} from "ng-apexcharts";
+
+export type ChartOptions = {
+  series: ApexAxisChartSeries;
+  chart: ApexChart;
+  xaxis: ApexXAxis;
+  title: ApexTitleSubtitle;
+};
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
@@ -25,6 +40,12 @@ export class DashboardComponent implements OnInit {
   public sunset: Date;
   public options: any[] = [];
   public searchTextVal: any = true;
+  public data: any;
+  @ViewChild("chart") chart: ChartComponent;
+  public chartOptions: any;
+  public isHourlyDataLoaded = false;
+  public listOfHourlyData: any;
+
 
   constructor(
     private locationService: LocationDetailsService,
@@ -32,12 +53,91 @@ export class DashboardComponent implements OnInit {
     private auth: AuthService
   ) { }
 
-  ngOnInit(): void {
-    this.getBulkCities();
+  async ngOnInit() {
+    await this.getBulkCities();
+    await this.getGraphDetails();
   }
 
-  getBulkCities(): void {
-    this.locationService.getBulkCitiesDetails().subscribe((data): any => {
+  getGraphDetails() {
+    this.chartOptions = {
+      chart: {
+        height: 280,
+        width: 800,
+        type: 'area'
+      },
+      dataLabels: {
+        enabled: false
+      },
+      grid: {
+        borderColor: '#ebebeb',
+        clipMarkers: false,
+        xaxis: {
+          lines: {
+            show: true
+          }
+        },
+        yaxis: {
+          lines: {
+            show: false
+          }
+        }
+      },
+      markers: {
+        size: 5,
+        colors: ['#fff'],
+        strokeColor: '#00BAEC',
+        strokeWidth: 2,
+        hover: {
+          size: 5,
+          sizeOffset: 3,
+          strokeColor: '#00BAEC'
+        }
+      },
+      series: [
+        {
+          name: 'temp',
+          data: []
+        }
+      ],
+      colors: ['#00a6fa'],
+      fill: {
+        type: 'gradient',
+        gradient: {
+          shadeIntensity: 1,
+          opacityFrom: 0.7,
+          opacityTo: 0.9,
+          stops: [0, 70, 100]
+        }
+      },
+      yaxis: {
+        show: false
+      },
+      xaxis: {
+        categories: []
+      },
+      stroke: {
+        width: [2, 2]
+      },
+      tooltip: {
+        followCursor: true,
+        style: {
+          fontSize: '14px',
+          fontFamily: 'Roboto, sans-serif'
+        },
+        custom: ({ series, seriesIndex, dataPointIndex, w }) => {
+          return (
+            `<div class="arrow_box">
+      <span>${w.globals.categoryLabels[dataPointIndex]}</span>
+      <br>
+      <span class="temp">temp : ${series[seriesIndex][dataPointIndex]}</span>
+      </div>`
+          );
+        }
+      }
+    }
+  }
+  getBulkCities() {
+    this.locationService.getBulkCitiesDetails().subscribe((data) => {
       this.bulkCities = data;
       this.getIpAddressOfParticularUser();
     }, error => {
@@ -62,38 +162,49 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  getIpAddressOfParticularUser(): void {
-    if ('geolocation' in navigator) {
-      // check if geolocation is supported/enabled on current browser
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          this.latitude = position.coords.latitude;
-          this.longitude = position.coords.longitude;
-          // for when getting location is a success
-          console.log('latitude', position.coords.latitude,
-            'longitude', position.coords.longitude);
-          const getCity = this.bulkCities.find(city => city.lat === this.latitude && city.lng === this.longitude);
-          if (getCity) {
-            this.getParticularDays(position.coords.latitude, position.coords.longitude);
-          } else {
-            const mumbai = this.bulkCities.find(city => city.city === 'Mumbai');
-            this.searchText = `${mumbai.city}, ${mumbai.admin}`;
-            this.getParticularDays(mumbai.lat, mumbai.lng);
-          }
-        },
-        (errorMessage) => {
-          console.error('An error has occured while retrieving location', errorMessage);
-        }
-      );
-    } else {
-      console.log('geolocation is not enabled on this browser');
-    }
+  getIpAddressOfParticularUser() {
+    this.locationService.getLocation().subscribe(async (response: any) => {
+      this.latitude = response.lat;
+      this.longitude = response.lon;
+      let locatedCity = this.bulkCities.find(city => city.city === response.city);
+      if (locatedCity) {
+        this.searchText = `${locatedCity.city}, ${locatedCity.admin}`;
+        await this.getParticularDays(this.latitude, this.longitude);
+      } else {
+        const mumbai = this.bulkCities.find(city => city.city === 'Mumbai');
+        this.searchText = `${mumbai.city}, ${mumbai.admin}`;
+        await this.getParticularDays(mumbai.lat, mumbai.lng);
+      }
+    }, error => {
+      console.error('An error has occured while retrieving location', error);
+    })
   }
 
+  getParticularHours(latitude, longitude) {
+    this.locationService.getParticularDays(latitude, longitude).subscribe((data: any) => {
+      const dataOfHours = data.hourly;
+      const finalData = dataOfHours.map((value) => {
+        value.dt = new Date(value.dt * 1000).getMinutes();
+        value.dt = this.days[value.dt];
+        return value;
+      });
+    }, error => {
+      console.log('Error in gettimg hourly data', error);
+
+    })
+  }
   getParticularDays(latitude, longitude): any {
     this.auth.enableLoader = true;
     this.locationService.getParticularDays(latitude, longitude).subscribe((data: any) => {
       this.lsistOfWeatherDays = data.daily;
+      this.listOfHourlyData = data.hourly;
+      this.listOfHourlyData.forEach((d) => {
+        if (new Date(data.daily[0].dt * 1000).getDate() === new Date(d.dt * 1000).getDate()) {
+          this.chartOptions.xaxis.categories.push(this.datePipe.transform(new Date(d.dt * 1000), 'h a'));
+          this.chartOptions.series[0].data.push(d.temp);
+        }
+      });
+      this.isHourlyDataLoaded = true;
       const finalData = this.lsistOfWeatherDays.map((value) => {
         value.dt = new Date(value.dt * 1000).getDay();
         value.dt = this.days[value.dt];
@@ -113,14 +224,27 @@ export class DashboardComponent implements OnInit {
     });
   }
 
-  showSingleData(singleData): void {
+  async showSingleData(singleData) {
+    this.isHourlyDataLoaded = false;
     this.singleDataStorage = singleData;
     this.chartSingleDataMax = singleData.temp.max;
     this.chartSingleDataWeatherMain = singleData.weather[0].main;
-    const sunriseData = new Date(singleData.sunrise * 1000);
-    const sunsetData = new Date(singleData.sunset * 1000);
-    this.sunrise = sunriseData;
-    this.sunset = sunsetData;
+    this.sunrise = new Date(singleData.sunrise * 1000);
+    this.sunset = new Date(singleData.sunset * 1000);
+    this.chartOptions.xaxis.categories.length = 0;
+    this.chartOptions.series[0].data.length = 0;
+    this.listOfHourlyData.forEach((data) => {
+      if (singleData.dt === this.datePipe.transform(new Date(data.dt * 1000), 'EEEE')) {
+        this.chartOptions.xaxis.categories.push(this.datePipe.transform(new Date(data.dt * 1000), 'h a'));
+        this.chartOptions.series[0].data.push(data.temp);
+      }
+    });
+    this.auth.enableLoader = true;
+    await setTimeout(() => {
+      this.isHourlyDataLoaded = true;
+      this.auth.enableLoader = false;
+    }, 3000);
+
   }
 
   searchDataAvail(city): void {

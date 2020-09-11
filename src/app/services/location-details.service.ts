@@ -12,6 +12,10 @@ export class LocationDetailsService {
     private http: HttpClient
   ) { }
 
+  getLocation() {
+    const urlGet=  'http://ip-api.com/json';
+    return this.http.get(urlGet);
+  }
   getBulkCitiesDetails(): any {
     const urlGet = '/assets/data/in.json';
     return this.http.get(urlGet);

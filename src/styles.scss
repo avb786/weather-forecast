@@ -2,3 +2,32 @@
 
 /* Importing Bootstrap SCSS file. */
 @import '~bootstrap/scss/bootstrap';
+
+#chart {
+    max-width: 650px;
+    margin: 35px auto;
+    cursor: pointer;
+    overflow: scroll;
+    }
+    .arrow_box {
+    position: relative;
+    background: #fff;
+    }
+    #chart .apexcharts-tooltip {
+    color: #706b66;
+    transform: translateX(10px) translateY(10px);
+    overflow: visible !important;
+    white-space: normal !important;
+    }
+    .temp {
+    color: #50d1ef;
+    }
+    #chart .apexcharts-tooltip span {
+    padding: 5px 10px;
+    font-size: 18px;
+    font-family: 'Roboto', 'sans-serif';
+    display: inline-block;
+    }
+    div.apexcharts-toolbar {
+        z-index: 9 !important;
+    }
