@@ -163,21 +163,34 @@ export class DashboardComponent implements OnInit {
   }
 
   getIpAddressOfParticularUser() {
-    this.locationService.getLocation().subscribe(async (response: any) => {
-      this.latitude = response.lat;
-      this.longitude = response.lon;
-      let locatedCity = this.bulkCities.find(city => city.city === response.city);
-      if (locatedCity) {
-        this.searchText = `${locatedCity.city}, ${locatedCity.admin}`;
-        await this.getParticularDays(this.latitude, this.longitude);
-      } else {
-        const mumbai = this.bulkCities.find(city => city.city === 'Mumbai');
-        this.searchText = `${mumbai.city}, ${mumbai.admin}`;
-        await this.getParticularDays(mumbai.lat, mumbai.lng);
-      }
-    }, error => {
-      console.error('An error has occured while retrieving location', error);
-    })
+    if ("geolocation" in navigator) {
+      // check if geolocation is supported/enabled on current browser
+      navigator.geolocation.getCurrentPosition(async (position) => {
+        // for when getting location is a success
+        this.latitude = position.coords.latitude;
+        this.longitude = position.coords.longitude;
+        await this.locationService.getCityName(this.latitude, this.longitude).subscribe((data: any) => {
+          let locatedCity;
+          locatedCity = this.bulkCities.find(city => city.city === data.results[0].components.city);
+          if (locatedCity) {
+            this.searchText = `${locatedCity.city}, ${locatedCity.admin}`;
+            this.getParticularDays(locatedCity.lat, locatedCity.lng);
+          } else {
+            const mumbai = this.bulkCities.find(city => city.city === 'Mumbai');
+            this.searchText = `${mumbai.city}, ${mumbai.admin}`;
+            this.getParticularDays(mumbai.lat, mumbai.lng);
+          }
+        })
+      },
+        error_message => {
+          // for when getting location results in an error
+          console.error('An error has occured while retrieving ocation', error_message)
+        });
+    } else {
+      // geolocation is not supported
+      // get your location some other way
+      console.log('geolocation is not enabled on this browser')
+    }
   }
 
   getParticularHours(latitude, longitude) {
@@ -220,7 +233,7 @@ export class DashboardComponent implements OnInit {
       this.sunset = this.lsistOfWeatherDays[0].sunset;
       this.auth.enableLoader = false;
     }, error => {
-
+      console.error('Something went wrong', error)
     });
   }
 
@@ -248,9 +261,14 @@ export class DashboardComponent implements OnInit {
   }
 
   searchDataAvail(city): void {
-    this.getParticularDays(city.lat, city.lng);
-    this.searchTextVal = false;
-    this.searchText = `${city.city}, ${city.admin}`;
+    this.locationService.getCityName(city.lat, city.lng).subscribe((response: any) => {
+      this.getParticularDays(response.results[0].geometry.lat, response.results[0].geometry.lng);
+      this.searchTextVal = false;
+      this.searchText = `${response.results[0].components.city}, ${response.results[0].components.state}`;
+    }, error => {
+      console.error('Error on Search data', error);
+    })
+
   }
 
 }

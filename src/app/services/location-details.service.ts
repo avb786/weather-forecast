@@ -13,7 +13,11 @@ export class LocationDetailsService {
   ) { }
 
   getLocation() {
-    const urlGet=  'https://ip-api.com/json';
+    const urlGet = 'https://ip-api.com/json';
+    return this.http.get(urlGet);
+  }
+  getCityName(LAT, LNG) {
+    const urlGet = `https://api.opencagedata.com/geocode/v1/json?q=${LAT}+${LNG}&key=3d0639f70f2945b9a82c71f6143f79e0`;
     return this.http.get(urlGet);
   }
   getBulkCitiesDetails(): any {
