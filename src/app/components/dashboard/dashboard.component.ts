@@ -8,14 +8,26 @@ import {
   ApexAxisChartSeries,
   ApexChart,
   ApexXAxis,
-  ApexTitleSubtitle
+  ApexDataLabels,
+  ApexYAxis,
+  ApexLegend,
+  ApexFill,
+  ApexMarkers,
+  ApexTitleSubtitle,
+  ApexTooltip
 } from "ng-apexcharts";
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
   chart: ApexChart;
   xaxis: ApexXAxis;
+  dataLabels: ApexDataLabels;
+  yaxis: ApexYAxis;
+  legend: ApexLegend;
+  fill: ApexFill;
+  markers: ApexMarkers;
   title: ApexTitleSubtitle;
+  tooltip: ApexTooltip;
 };
 @Component({
   selector: 'app-dashboard',
@@ -23,6 +35,7 @@ export type ChartOptions = {
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
+  @ViewChild("chart") chart: ChartComponent;
 
   public searchText: any = null;
   public bulkCities: any;
@@ -37,32 +50,32 @@ export class DashboardComponent implements OnInit {
   public chartSingleDataWeatherMain: any;
   public days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   public sunrise: any;
-  public sunset: Date;
+  public sunset: any;
   public options: any[] = [];
   public searchTextVal: any = true;
   public data: any;
-  @ViewChild("chart") chart: ChartComponent;
   public chartOptions: any;
+  public chartOptions2: any;
   public isHourlyDataLoaded = false;
   public listOfHourlyData: any;
-
-
+  public showSecondChart: any;
   constructor(
     private locationService: LocationDetailsService,
     private datePipe: DatePipe,
     private auth: AuthService
   ) { }
 
-  async ngOnInit() {
-    await this.getBulkCities();
-    await this.getGraphDetails();
+  ngOnInit() {
+    this.getBulkCities();
+    this.getGraphDetails();
+    this.getSunGraphDetails();
   }
 
   getGraphDetails() {
     this.chartOptions = {
       chart: {
         height: 280,
-        width: 800,
+        width: 1500,
         type: 'area'
       },
       dataLabels: {
@@ -136,6 +149,60 @@ export class DashboardComponent implements OnInit {
       }
     }
   }
+
+  getSunGraphDetails() {
+    this.chartOptions2 = {
+      chart: {
+        height: 200,
+        type: 'area',
+        toolbar: {
+          show: false
+        },
+      },
+      dataLabels: {
+        enabled: false
+      },
+      grid: {
+        xaxis: {
+          lines: {
+            show: false
+          }
+        },
+        yaxis: {
+          lines: {
+            show: false
+          }
+        }
+      },
+      markers: {
+        show: false
+      },
+      series: [
+        {
+          data: []
+        }
+      ],
+      colors: ['#fedd4b'],
+      fill: {
+        type: 'solid',
+        color: ['#fdf9f1']
+      },
+      yaxis: {
+        show: false
+      },
+      xaxis: {
+        categories: [],
+        min: '5:00 AM',
+        max: '7:00 PM'
+      },
+      stroke: {
+        width: [2, 2]
+      },
+      tooltip: {
+        enabled: false
+      }
+    };
+  }
   getBulkCities() {
     this.locationService.getBulkCitiesDetails().subscribe((data) => {
       this.bulkCities = data;
@@ -169,7 +236,7 @@ export class DashboardComponent implements OnInit {
         // for when getting location is a success
         this.latitude = position.coords.latitude;
         this.longitude = position.coords.longitude;
-        await this.locationService.getCityName(this.latitude, this.longitude).subscribe((data: any) => {
+        this.locationService.getCityName(this.latitude, this.longitude).subscribe((data: any) => {
           let locatedCity;
           locatedCity = this.bulkCities.find(city => city.city === data.results[0].components.city);
           if (locatedCity) {
@@ -183,12 +250,9 @@ export class DashboardComponent implements OnInit {
         })
       },
         error_message => {
-          // for when getting location results in an error
           console.error('An error has occured while retrieving ocation', error_message)
         });
     } else {
-      // geolocation is not supported
-      // get your location some other way
       console.log('geolocation is not enabled on this browser')
     }
   }
@@ -229,8 +293,9 @@ export class DashboardComponent implements OnInit {
       this.chartSingleDataWeatherMain = this.lsistOfWeatherDays[0].weather[0].main;
       this.singleDataStorage.pressure = this.lsistOfWeatherDays[0].pressure;
       this.singleDataStorage.humidity = this.lsistOfWeatherDays[0].humidity;
-      this.sunrise = this.lsistOfWeatherDays[0].sunrise;
-      this.sunset = this.lsistOfWeatherDays[0].sunset;
+      this.sunrise = new Date(this.lsistOfWeatherDays[0].sunrise * 1000);
+      this.sunset = new Date(this.lsistOfWeatherDays[0].sunset * 1000);
+      this.setSunsetAndSunrise(this.sunrise, this.sunset);
       this.auth.enableLoader = false;
     }, error => {
       console.error('Something went wrong', error)
@@ -253,13 +318,13 @@ export class DashboardComponent implements OnInit {
       }
     });
     this.auth.enableLoader = true;
-    await setTimeout(() => {
+    this.setSunsetAndSunrise(this.sunrise, this.sunset);
+    setTimeout(() => {
       this.isHourlyDataLoaded = true;
       this.auth.enableLoader = false;
     }, 3000);
 
   }
-
   searchDataAvail(city): void {
     this.locationService.getCityName(city.lat, city.lng).subscribe((response: any) => {
       this.getParticularDays(response.results[0].geometry.lat, response.results[0].geometry.lng);
@@ -268,7 +333,29 @@ export class DashboardComponent implements OnInit {
     }, error => {
       console.error('Error on Search data', error);
     })
+  }
 
+  setSunsetAndSunrise(sunrise, sunset): void {
+    this.showSecondChart = false;
+    this.chartOptions2.series[0].data.length = 0;
+    this.chartOptions2.series[0].data.push({
+      x: this.datePipe.transform(new Date(sunrise), 'shortTime'), y: 0
+    });
+    this.chartOptions2.series[0].data.push({
+      x: '3:00 PM', y: 1
+    });
+    this.chartOptions2.series[0].data.push({
+      x: this.datePipe.transform(new Date(sunset), 'shortTime'), y: 0
+    });
+    this.auth.enableLoader = true;
+    setTimeout(() => {
+      this.showSecondChart = true;
+      this.auth.enableLoader = false;
+    }, 3000);
+  }
+
+  focusOnSearchBox() {
+    document.getElementById("searchBox").focus();
   }
 
 }

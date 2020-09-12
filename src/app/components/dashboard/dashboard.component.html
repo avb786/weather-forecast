@@ -1,17 +1,15 @@
 <div class="container-fluid">
     <div class="container">
-
-        <!-- Search Bar Starts -->
-
         <div class="row offset-md-1 mt-2">
             <div class="col-md-10 col-sm-10 col-xs-10">
                 <div class="SearchBar_searchContainer__3RS1T">
                     <img src="../../../assets/img/pin.svg" class="SearchBar_iconLocation__1Egat SearchBar_icons__37sj1"
                         alt="location_icon">
-                    <input type="text" class="SearchBar_searchInput__2pENS" placeholder="Search"
+                    <input type="text" id="searchBox" class="SearchBar_searchInput__2pENS" placeholder="Search"
                         [(ngModel)]="searchText" (ngModelChange)="filterCity(searchText)">
                     <button class="SearchBar_searchBtn__3qNgr">
-                        <img src="../../../assets/img/search.svg" class="SearchBar_icons__37sj1" alt="Search_Icon">
+                        <img src="../../../assets/img/search.svg" (click)="focusOnSearchBox()"
+                            class="SearchBar_icons__37sj1" alt="Search_Icon">
                     </button>
                     <section class="SearchBar_searchListContainer__1mpdS">
                         <div *ngFor="let city of options">
@@ -72,8 +70,11 @@
                             alt="Rain">
                     </div>
                     <div class="DetailedForecast_graphContainer__3t3cx">
-                        <apx-chart id="chart" *ngIf="isHourlyDataLoaded" [series]="chartOptions.series" [chart]="chartOptions.chart" [fill]="chartOptions.fill" [yaxis]="chartOptions.yaxis" [xaxis]="chartOptions.xaxis" [tooltip]="chartOptions.tooltip"
-                          [xaxis]="chartOptions.xaxis" [grid]="chartOptions.grid" [colors]="chartOptions.colors" [markers]="chartOptions.markers" [dataLabels]="chartOptions.dataLabels" [stroke]="chartOptions.stroke"></apx-chart>
+                        <apx-chart id="chart" *ngIf="isHourlyDataLoaded" [series]="chartOptions.series"
+                            [chart]="chartOptions.chart" [fill]="chartOptions.fill" [yaxis]="chartOptions.yaxis"
+                            [xaxis]="chartOptions.xaxis" [tooltip]="chartOptions.tooltip" [xaxis]="chartOptions.xaxis"
+                            [grid]="chartOptions.grid" [colors]="chartOptions.colors" [markers]="chartOptions.markers"
+                            [dataLabels]="chartOptions.dataLabels" [stroke]="chartOptions.stroke"></apx-chart>
                     </div>
 
 
@@ -84,10 +85,7 @@
                         <div class="DetailedForecast_secondaryStats__27RJT"><span
                                 class="bold">Humidity</span><span>{{singleDataStorage.humidity}} %</span></div>
                     </div>
-
-
                     <!-- Sun Rise -->
-
 
                     <div>
                         <div class="d-flex justify-space-between">
@@ -97,84 +95,13 @@
                                     class="text-lighter">{{sunset  | date: 'shortTime'}}</span></div>
                         </div>
                         <div style="height: 200px;">
-                            <div class="recharts-responsive-container"
-                                style="width: 100%; height: 100%;">
-                                <div class="recharts-wrapper wrap-svg"
-                                    style="position: relative; cursor: default; height: 200px;"><svg
-                                        class="recharts-surface mountain-surface" height="200" viewBox="0 0 715 200"
-                                        version="1.1">
-                                        <defs>
-                                            <clipPath id="recharts6-clip">
-                                                <rect x="18" y="0" height="170" width="687"></rect>
-                                            </clipPath>
-                                        </defs>
-                                        <defs>
-                                            <linearGradient id="time" x1="0" y1="0" x2="0" y2="1">
-                                                <stop offset="5%" stop-color="#F7E0AF" stop-opacity="0.6"></stop>
-                                                <stop offset="90%" stop-color="#F7E0AF" stop-opacity="0.1"></stop>
-                                            </linearGradient>
-                                        </defs>
-                                        <g class="recharts-layer recharts-cartesian-axis recharts-xAxis xAxis">
-                                            <line class="recharts-cartesian-axis-line" width="687" height="30" x="18"
-                                                y="170" stroke="#666" fill="none" x1="18" y1="170" x2="705" y2="170">
-                                            </line>
-                                            <g class="recharts-cartesian-axis-ticks">
-                                                <g class="recharts-layer recharts-cartesian-axis-tick"><text width="687"
-                                                        height="30" x="18" y="178" stroke="none" fill="#666"
-                                                        class="recharts-text recharts-cartesian-axis-tick-value"
-                                                        text-anchor="middle">
-                                                        <tspan x="18" dy="0.71em">5am</tspan>
-                                                    </text></g>
-                                                <g class="recharts-layer recharts-cartesian-axis-tick"><text width="687"
-                                                        height="30" x="189.75" y="178" stroke="none" fill="#666"
-                                                        class="recharts-text recharts-cartesian-axis-tick-value"
-                                                        text-anchor="middle">
-                                                        <tspan x="189.75" dy="0.71em"></tspan>
-                                                    </text></g>
-                                                <g class="recharts-layer recharts-cartesian-axis-tick"><text width="687"
-                                                        height="30" x="361.5" y="178" stroke="none" fill="#666"
-                                                        class="recharts-text recharts-cartesian-axis-tick-value"
-                                                        text-anchor="middle">
-                                                        <tspan x="361.5" dy="0.71em">3am</tspan>
-                                                    </text></g>
-                                                <g class="recharts-layer recharts-cartesian-axis-tick"><text width="687"
-                                                        height="30" x="533.25" y="178" stroke="none" fill="#666"
-                                                        class="recharts-text recharts-cartesian-axis-tick-value"
-                                                        text-anchor="middle">
-                                                        <tspan x="533.25" dy="0.71em"></tspan>
-                                                    </text></g>
-                                                <g class="recharts-layer recharts-cartesian-axis-tick"><text width="687"
-                                                        height="30" x="699.0078125" y="178" stroke="none" fill="#666"
-                                                        class="recharts-text recharts-cartesian-axis-tick-value"
-                                                        text-anchor="middle">
-                                                        <tspan x="699.0078125" dy="0.71em">7pm</tspan>
-                                                    </text></g>
-                                            </g>
-                                        </g>
-                                        <g class="recharts-layer recharts-area">
-                                            <g class="recharts-layer">
-                                                <path stroke="none" fill="url(#time)" fill-opacity="0.6" width="687"
-                                                    height="170" class="recharts-curve recharts-area-area"
-                                                    d="M189.75,141.66666666666666C247,113.33333333333333,304.25,56.666666666666664,361.5,56.666666666666664C418.75,56.666666666666664,476,113.33333333333333,533.25,141.66666666666666C590.5,170,647.75,170,561.875,170C476,170,247,170,161.125,170C75.25,170,132.5,170,189.75,141.66666666666666M533.25,170C476,170,418.75,170,361.5,170C304.25,170,247,170,189.75,170C132.5,170,75.25,170,161.125,170C247,170,476,170,561.875,170C647.75,170,590.5,170,533.25,170">
-                                                </path>
-                                                <path stroke="#FEDB41" fill="none" fill-opacity="0.6" width="687"
-                                                    height="170" class="recharts-curve recharts-area-curve"
-                                                    d="M189.75,141.66666666666666C247,113.33333333333333,304.25,56.666666666666664,361.5,56.666666666666664C418.75,56.666666666666664,476,113.33333333333333,533.25,141.66666666666666C590.5,170,647.75,170,561.875,170C476,170,247,170,161.125,170C75.25,170,132.5,170,189.75,141.66666666666666">
-                                                </path>
-                                            </g>
-                                        </g>
-                                    </svg></div>
-                                <div
-                                    style="position: absolute; width: 0px; height: 0px; visibility: hidden; display: none;">
-                                </div>
-                            </div>
+                            <apx-chart *ngIf="showSecondChart" [series]="chartOptions2.series"
+                                [chart]="chartOptions2.chart" [xaxis]="chartOptions2.xaxis"
+                                [stroke]="chartOptions2.stroke" [tooltip]="chartOptions2.tooltip"
+                                [dataLabels]="chartOptions2.dataLabels" [colors]="chartOptions2.colors"></apx-chart>
                         </div>
                     </div>
                 </section>
-
             </div>
-
-            <!-- Search Bar Ends -->
-
         </div>
     </div>
