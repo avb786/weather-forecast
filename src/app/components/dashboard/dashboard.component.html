@@ -18,7 +18,7 @@
                                             class="text-capitalize">{{city.city}}</b></span>,<span class="text-lighter">
                                         {{city.admin}}</span></span>
                                 <div class="d-flex justify-space-between">
-                                    <div class="d-flex fd-column"><span>{{ city?.temp }} <sup>o</sup>C</span>
+                                    <div class="d-flex fd-column"><span>{{ city?.temp | number: '1.0-0' }} <sup>o</sup>C</span>
                                         &nbsp;&nbsp;<span class="text-lighter">{{ city?.weather }}</span>
                                     </div>
                                     <img *ngIf="city?.weather === 'Clouds'" class="SearchList_weatherIcon__E3rLp"
@@ -96,7 +96,7 @@
                         </div>
                         <div style="height: 200px;">
                             <apx-chart *ngIf="showSecondChart" [series]="chartOptions2.series"
-                                [chart]="chartOptions2.chart" [xaxis]="chartOptions2.xaxis"
+                                [chart]="chartOptions2.chart" [xaxis]="chartOptions2.xaxis" [yaxis]="chartOptions2.yaxis"
                                 [stroke]="chartOptions2.stroke" [tooltip]="chartOptions2.tooltip"
                                 [dataLabels]="chartOptions2.dataLabels" [colors]="chartOptions2.colors"></apx-chart>
                         </div>
