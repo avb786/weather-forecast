@@ -13,7 +13,7 @@ export class LocationDetailsService {
   ) { }
 
   getLocation() {
-    const urlGet=  'http://ip-api.com/json';
+    const urlGet=  'https://ip-api.com/json';
     return this.http.get(urlGet);
   }
   getBulkCitiesDetails(): any {
