@@ -250,6 +250,9 @@ export class DashboardComponent implements OnInit {
         })
       },
         error_message => {
+          const mumbai = this.bulkCities.find(city => city.city === 'Mumbai');
+          this.searchText = `${mumbai.city}, ${mumbai.admin}`;
+          this.getParticularDays(mumbai.lat, mumbai.lng);
           console.error('An error has occured while retrieving ocation', error_message)
         });
     } else {
